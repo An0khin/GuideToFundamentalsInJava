@@ -2,6 +2,7 @@ package com.home;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BankTransactionProcessor {
@@ -61,19 +62,23 @@ public class BankTransactionProcessor {
 	public BankTransaction calculateCheapestTransaction(final LocalDate from, final LocalDate to) {
 		BankTransaction cheapestTransaction = null;
 		
-		for(int i = 0; i < transactions.size(); i++) {
-			final BankTransaction transaction = transactions.get(i);
-			final LocalDate date = transaction.getDate();
-			final double amount = transaction.getAmount();
-			
-			if(dateInTimeRange(date, from, to)) {
-				if(cheapestTransaction == null)
-					cheapestTransaction = transaction;
-				if(amount < cheapestTransaction.getAmount())
-					cheapestTransaction = transaction;
-			}
-			
-		}
+		cheapestTransaction = transactions.stream()
+				.filter((transaction) -> dateInTimeRange(transaction.getDate(), from, to))
+				.min(new BankTransactionAmountComparator<>())
+				.get();
+		
+//		for(int i = 0; i < transactions.size(); i++) {
+//			final BankTransaction transaction = transactions.get(i);
+//			final LocalDate date = transaction.getDate();
+//			final double amount = transaction.getAmount();
+//			
+//			if(dateInTimeRange(date, from, to)) {
+//				if(cheapestTransaction == null)
+//					cheapestTransaction = transaction;
+//				if(amount < cheapestTransaction.getAmount())
+//					cheapestTransaction = transaction;
+//			}
+//		}
 		
 		return cheapestTransaction;
 	}
@@ -81,21 +86,39 @@ public class BankTransactionProcessor {
 	public BankTransaction calculateMostExpensiveTransaction(final LocalDate from, final LocalDate to) {
 		BankTransaction mostExpensive = null;
 		
-		for(int i = 0; i < transactions.size(); i++) {
-			final BankTransaction transaction = transactions.get(i);
-			final LocalDate date = transaction.getDate();
-			final double amount = transaction.getAmount();
-			
-			if((date.isEqual(from) || date.isAfter(from)) && 
-					(date.isEqual(to) || date.isBefore(to))) {
-				if(mostExpensive == null)
-					mostExpensive = transaction;
-				if(amount > mostExpensive.getAmount())
-					mostExpensive = transaction;
-			}
-			
-		}
+		mostExpensive = transactions.stream()
+				.filter((transaction) -> dateInTimeRange(transaction.getDate(), from, to))
+				.max(new BankTransactionAmountComparator<>())
+				.get();
+		
+//		for(int i = 0; i < transactions.size(); i++) {
+//			final BankTransaction transaction = transactions.get(i);
+//			final LocalDate date = transaction.getDate();
+//			final double amount = transaction.getAmount();
+//			
+//			if((date.isEqual(from) || date.isAfter(from)) && 
+//					(date.isEqual(to) || date.isBefore(to))) {
+//				if(mostExpensive == null)
+//					mostExpensive = transaction;
+//				if(amount > mostExpensive.getAmount())
+//					mostExpensive = transaction;
+//			}
+//			
+//		}
 		
 		return mostExpensive;
+	}
+	
+	public List<BankTransaction> findTransactions(final BankTransactionFilter<BankTransaction> bankTransactionFilter) {
+		final List<BankTransaction> result = new ArrayList<>();
+		
+		for(int i = 0; i < transactions.size(); i++) {
+			BankTransaction transaction = transactions.get(i);
+			
+			if(bankTransactionFilter.test(transaction))
+				result.add(transaction);
+		}
+		
+		return result;
 	}
 }

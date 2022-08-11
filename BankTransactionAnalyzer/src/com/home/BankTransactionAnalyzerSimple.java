@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Arrays;
 import java.util.List;
 
 public class BankTransactionAnalyzerSimple {
@@ -25,7 +26,7 @@ public class BankTransactionAnalyzerSimple {
 		
 		final BankTransactionProcessor processor =
 				new BankTransactionProcessor(transactions);
-		
+				
 		System.out.println("Total amount = " + processor.calculateTotalAmount());
 		System.out.println("Amount in January = " + processor.selectInMonth(Month.JANUARY));
 		System.out.println("Amount by Tesco = " + processor.calculateAmountByCategory("Tesco"));
@@ -33,6 +34,13 @@ public class BankTransactionAnalyzerSimple {
 				processor.calculateMostExpensiveTransaction(LocalDate.of(2017, 2, 1), LocalDate.of(2017, 2, 4)));		
 		System.out.println("The cheapest from 01.02.2017 to 04.02.2017 = " + 
 				processor.calculateCheapestTransaction(LocalDate.of(2017, 2, 1), LocalDate.of(2017, 2, 4)));
+
+		System.out.println("Transactions in February");
+		final List<BankTransaction> transactionsInFebruary = 
+				processor.findTransactions((transaction) -> transaction.getDate().getMonth() == Month.FEBRUARY);
+		for(int i = 0; i < transactionsInFebruary.size(); i++) {
+			System.out.println(transactionsInFebruary.get(i));
+		}
 		
 //		Double total = 0d;
 //		final List<String> lines = Files.readAllLines(path);
