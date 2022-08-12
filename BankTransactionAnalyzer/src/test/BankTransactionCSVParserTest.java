@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.home.BankTransaction;
 import com.home.BankTransactionCSVParser;
+import com.home.CSVSyntaxException;
 
 public class BankTransactionCSVParserTest {
 	final BankTransactionCSVParser parser =
@@ -22,6 +23,10 @@ public class BankTransactionCSVParserTest {
 				5400d,
 				"Test");
 		
-		assertEquals(expected, parser.parseFromCSV(line));
+		try {
+			assertEquals(expected, parser.parseFromCSV(line));
+		} catch (CSVSyntaxException e) {
+			e.printStackTrace();
+		}
 	}
 }

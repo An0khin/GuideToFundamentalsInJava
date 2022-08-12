@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Arrays;
 import java.util.List;
 
 public class BankTransactionAnalyzerSimple {
@@ -21,8 +20,12 @@ public class BankTransactionAnalyzerSimple {
 		final String fileName = args[0];
 		final Path path = Paths.get(RESOURCES, fileName);
 		
-		final List<BankTransaction> transactions = 
-				parser.parseCSV(Files.readAllLines(path));
+		List<BankTransaction> transactions = null;
+		try {
+			transactions = parser.parseCSV(Files.readAllLines(path));
+		} catch (CSVSyntaxException e) {
+			e.printStackTrace();
+		}
 		
 		final BankTransactionProcessor processor =
 				new BankTransactionProcessor(transactions);
