@@ -15,21 +15,21 @@ public class BusinessRuleEngineTest {
 	public void shouldAddTwoActions() {
 		final BusinessRuleEngine engine = new BusinessRuleEngine(new Facts());
 		
-		engine.addAction((facts) -> {});
-		engine.addAction((facts) -> {});
+		engine.addRule((facts) -> {});
+		engine.addRule((facts) -> {});
 		
 		assertEquals(2, engine.count());
 	}
 	
 	@Test
 	public void shouldExecuteActionWithFacts() {
-		final Action mockAction = Mockito.mock(Action.class);
+		final Rule mockRule = Mockito.mock(Rule.class);
 		final Facts mockFacts = Mockito.mock(Facts.class);
-		final BusinessRuleEngine engine = new BusinessRuleEngine(new Facts());
+		final BusinessRuleEngine engine = new BusinessRuleEngine(mockFacts);
 		
-		engine.addAction(mockAction);
+		engine.addRule(mockRule);
 		engine.run();
 		
-		Mockito.verify(mockAction).execute(mockFacts);
+		Mockito.verify(mockRule).perform(mockFacts);
 	}
 }
